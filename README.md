@@ -51,6 +51,27 @@ enrichment analysis: are pharmacogenomically-annotated AEs over-represented
 visualization + report
 ```
 
+## Results
+
+Enrichment tested across **147 drugs** present in both FAERS and PharmGKB
+(Mann-Whitney U: are genomically-annotated AEs over-represented among strong signals?).
+
+| Correction | Significant drugs |
+|---|---|
+| None (raw p < 0.05) | 30 |
+| Benjamini-Hochberg FDR (q < 0.05) | **11** |
+| Bonferroni (p < 0.05) | 6 |
+
+**19 of 30 nominally-significant hits do not survive multiple-testing correction** — the
+honest result is the stronger one.
+
+Selected findings post-correction:
+- **Rituximab** — survives both BH-FDR and Bonferroni (q < 0.001)
+- **Interferon beta-1a** — survives BH-FDR (q = 0.011), not Bonferroni
+- **Atorvastatin** — does *not* survive correction (raw p = 0.033, q = 0.18)
+
+See `notebooks/01_pgx_enrichment.ipynb` for full drug-by-drug results.
+
 ## Key Concepts
 
 - **ROR (Reporting Odds Ratio):** How much more often is AE Y reported with Drug X 
@@ -63,7 +84,7 @@ visualization + report
 ## Requirements
 
 ```
-pip install pandas numpy scipy requests matplotlib seaborn pyarrow
+pip install pandas numpy scipy requests matplotlib seaborn pyarrow statsmodels
 ```
 
 ## Usage
