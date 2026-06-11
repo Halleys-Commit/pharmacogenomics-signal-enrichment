@@ -48,6 +48,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 from scipy import stats
+from statsmodels.stats.multitest import multipletests
 
 logger = logging.getLogger(__name__)
 
@@ -313,6 +314,15 @@ class PGxEnrichment:
             })
 
         result = pd.DataFrame(results).sort_values("p_value").reset_index(drop=True)
+
+        if not result.empty:
+            _, p_fdr_bh, _, _ = multipletests(result["p_value"], method="fdr_bh",    alpha=0.05)
+            _, p_bonf,   _, _ = multipletests(result["p_value"], method="bonferroni", alpha=0.05)
+            result["p_value_fdr_bh"]        = p_fdr_bh.round(4)
+            result["p_value_bonferroni"]     = p_bonf.round(4)
+            result["significant_fdr"]        = p_fdr_bh < 0.05
+            result["significant_bonferroni"] = p_bonf < 0.05
+
         n_sig = result["significant"].sum() if not result.empty else 0
         logger.info(f"Enrichment test: {n_sig}/{len(result)} drugs show significant PGx enrichment")
         return result
